@@ -3,15 +3,15 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import RegisterForm, { RegisterFormDefaultValue } from '../../interface/RegisterForm'
+import { access } from 'fs';
 
 function Copyright() {
   return (
@@ -46,34 +46,32 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface LoginPageProps {
+interface RegisterPageProps {
   isDisplay?: boolean;
-  account?: string;
-  password?: string;
-  onSubmit: (account: string, password: string) => void;
+  registerForm?:RegisterForm;
+  onSubmit: (registerForm: RegisterForm) => void;
   changePage(page:string):void;
 }
 
-const LoginPage: React.FC<LoginPageProps> = (props) => {
+const RegisterPage: React.FC<RegisterPageProps> = (props) => {
   const classes = useStyles();
-  const [account, setAccount] = useState("");
-  const [password, setPassword] = useState("");
+  const [registerForm, setRegisterForm] = useState(RegisterFormDefaultValue);
 
   return (
     <Container component="main" maxWidth="xs" style={props.isDisplay ? {} : { display: 'none' }}>
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
+          <PersonAddIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          登入
+          註冊
         </Typography>
         <form className={classes.form} noValidate onSubmit={
           (event) => {
             event.preventDefault();
 
-            props.onSubmit(account, password);
+            props.onSubmit(registerForm);
           }}>
           <TextField
             variant="outlined"
@@ -86,7 +84,7 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
             autoComplete="account"
             autoFocus
             onChange={(event) => {
-              setAccount(event.target.value)
+               setRegisterForm({...registerForm, account: event.target.value})
             }}
           />
           <TextField
@@ -100,7 +98,46 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
             id="password"
             autoComplete="current-password"
             onChange={(event) => {
-              setPassword(event.target.value)
+                setRegisterForm({...registerForm, password: event.target.value})
+            }}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="email"
+            label="Email"
+            type="email"
+            id="email"
+            onChange={(event) => {
+                setRegisterForm({...registerForm, email: event.target.value})
+            }}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="name"
+            label="Name"
+            type="name"
+            id="name"
+            onChange={(event) => {
+                setRegisterForm({...registerForm, name: event.target.value})
+            }}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="phone"
+            label="Phone"
+            type="phone"
+            id="phone"
+            onChange={(event) => {
+                setRegisterForm({...registerForm, phone: event.target.value})
             }}
           />
           <Button
@@ -115,9 +152,9 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
           <Grid container>
             <Grid item>
               <Link href="#" variant="body2" onClick={() => {
-                props.changePage("RegisterPage");
+                props.changePage("LoginPage");
               }}>
-                {"註冊"}
+                {"已有帳號"}
               </Link>
             </Grid>
           </Grid>
@@ -130,4 +167,4 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
   );
 }
 
-export default LoginPage;
+export default RegisterPage;
