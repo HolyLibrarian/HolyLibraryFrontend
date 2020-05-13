@@ -5,36 +5,40 @@ import LoginPage from './components/loginPage/loginPage'
 import RegisterPage from './components/registerPage/registerPage'
 import BorrowPage from './components/borrowPage/borrowPage'
 import Navbar from './components/Navbar/navbar'
-import { login, checkAuthorizition } from './apis/login'
+import { login, checkAuthorizition, register } from './apis/login'
+import { borrowCollection, returnCollection } from './apis/borrow'
 import BorrowRecord from './interface/BorrowRecord';
 import RegisterForm from './interface/RegisterForm';
 import $ from 'jquery';
-
 
 function App() {
   const [isShowLoginPage, setIsShowLoginPage] = useState(true);
   const [isShowRegisterPage, setIsShowRegisterPage] = useState(false);
   const [isShowBorrowPage, setIsShowBorrowPage] = useState(false);
-  const [isManager, SetIsManager] = useState(false);
+  const [isShowManageReaderPage, setIsShowManageReaderPage] = useState(false);
+  const [isManager, setIsManager] = useState(false);
+  const [isReader, setIsReader] = useState(false);
 
-  $(function(){
+  $(function () {
     checkLoginStatue();
+    localStorage.setItem('authority', 'manager');
+    setAuthority();
   });
 
-  function hideAllPage(){
+  function hideAllPage() {
     setIsShowLoginPage(false);
     setIsShowRegisterPage(false);
     setIsShowBorrowPage(false);
   }
 
-  const checkLoginStatue = () =>{
+  const checkLoginStatue = () => {
     var jwt = localStorage.getItem('jwt');
-    if(jwt != null){
+    if (jwt != null) {
       checkAuthorizition(jwt, (response) => {
-        if(response.success){
+        if (response.success) {
           setIsShowLoginPage(false);
           setAuthority();
-        }else{
+        } else {
           setIsShowLoginPage(true);
         }
       });
@@ -44,8 +48,8 @@ function App() {
   const loginRequest = (account: string, password: string) => {
     login(account, password, function (response) {
       if (response.success) {
-        localStorage.setItem('jwt', response.data.jwt);
-        localStorage.setItem('authority', response.data.authority);
+        localStorage.setItem('jwt', response.data.token);
+        localStorage.setItem('authority', response.data.iden);
         setIsShowLoginPage(false);
         setAuthority();
       } else {
@@ -54,31 +58,56 @@ function App() {
     });
   }
 
-  const registerRequest = (registerForm: RegisterForm) =>{
-
+  const registerRequest = (registerForm: RegisterForm) => {
+    register(registerForm, (response) => {
+      if (response.success) {
+        localStorage.setItem('jwt', response.data.jwt);
+        localStorage.setItem('authority', response.data.authority);
+        setIsShowRegisterPage(false);
+        setAuthority();
+      } else {
+        alert("註冊失敗");
+      }
+    });
   }
 
-  const borrowCollection = (borrowRecord: BorrowRecord) => {
-    
-  } 
+  const borrowCollectionRequest = (borrowRecord: BorrowRecord) => {
+    borrowCollection(borrowRecord, (response) => {
+      if (response.success) {
+        alert("借閱館藏成功");
+      }else{
+        alert("借閱館藏失敗");
+      }
+    })
+  }
 
-  const changePage = (page:string) =>{
+  const returnCollectionRequest = (collectionId: string) => {
+    returnCollection(collectionId, (response)=>{
+      if (response.success) {
+        alert("館藏歸還成功");
+      }else{
+        alert("館藏歸還失敗");
+      }
+    })
+  }
+
+  const changePage = (page: string) => {
     hideAllPage();
-    if(page === "BorrowCollectionPage"){
+    if (page === "BorrowCollectionPage") {
       setIsShowBorrowPage(true);
-    }else if(page === "RegisterPage"){
+    } else if (page === "RegisterPage") {
       setIsShowRegisterPage(true);
-    }else if(page === "LoginPage"){
+    } else if (page === "LoginPage") {
       setIsShowLoginPage(true);
     }
   }
 
   const setAuthority = () => {
     var authority = localStorage.getItem('authority');
-    if(authority === "reader"){
-      SetIsManager(false);
-    }else if(authority === "manager"){
-      SetIsManager(true);
+    if (authority === "reader") {
+      setIsReader(true);
+    } else if (authority === "manager") {
+      setIsManager(true);
     }
   }
 
@@ -86,7 +115,8 @@ function App() {
     <div>
       <Navbar
         isManager={isManager}
-        changePage={changePage} 
+        isReader={isReader}
+        changePage={changePage}
       />
       <Container>
         <LoginPage
@@ -102,7 +132,8 @@ function App() {
         />
 
         <BorrowPage
-          onSubmit={borrowCollection}
+          onBorrowSubmit={borrowCollectionRequest}
+          onReturnSubmit={returnCollectionRequest}
           isDisplay={isShowBorrowPage}
         />
       </Container>

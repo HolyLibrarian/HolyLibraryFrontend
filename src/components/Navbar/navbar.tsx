@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
 interface NavbarProps {
     isDisplay?: boolean;
     isManager?: boolean;
+    isReader?:boolean;
     changePage(page:string):void;
 }
 
@@ -37,9 +38,8 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                  <Button onClick={(event) =>{ props.changePage("ManageReaderPage") }} color="inherit">讀者管理</Button>}
                 {(props.isManager ?? false) && 
                  <Button onClick={(event) =>{ props.changePage("BorrowCollectionPage") }} color="inherit">借閱管理</Button>}
-                {(props.isManager ?? true) && 
+                {(props.isReader ?? false) && 
                  <Button onClick={(event) =>{ props.changePage("ReserveCollectionPage") }} color="inherit">預訂書籍</Button>}
-                 <Button onClick={(event) =>{ props.changePage("BorrowCollectionPage") }} color="inherit">借閱管理</Button>
             </Toolbar>
         </AppBar>
     );
