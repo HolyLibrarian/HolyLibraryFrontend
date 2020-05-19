@@ -18,7 +18,7 @@ export const borrowCollection = (borrowRecord: BorrowRecord, success: (respone: 
             success(respone);
         },
         error: function (respone) {
-            alert("系統發生錯誤");
+            alert("借閱失敗");
         }
     })
 }
@@ -48,7 +48,7 @@ export const returnCollection = (borrowRecordId: number, success: (respone: any)
             success(respone);
         },
         error: function () {
-            alert("系統發生錯誤,借閱失敗");
+            alert("歸還失敗");
         }
     })
 }

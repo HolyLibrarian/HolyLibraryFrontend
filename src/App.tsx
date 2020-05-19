@@ -8,7 +8,7 @@ import PersonalPage from './components/personalPage/personalPage'
 import Navbar from './components/Navbar/navbar'
 import { login, checkAuthorizition, register } from './apis/login'
 import { borrowCollection, returnCollection, searchBorrowRecords } from './apis/borrow'
-import BorrowRecord from './interface/BorrowRecord';
+import BorrowRecord, { BorrowRecordDefaultValue } from './interface/BorrowRecord';
 import RegisterForm from './interface/RegisterForm';
 import $ from 'jquery';
 
@@ -53,16 +53,16 @@ function App() {
 
   const logout = () => {
     localStorage.clear();
+    hideAllPage();
     setIsShowLoginPage(true);
     setAuthority();
   }
 
   const registerRequest = (registerForm: RegisterForm) => {
     register(registerForm, (response) => {
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('authority', response.authority);
-      setIsShowRegisterPage(false);
-      setAuthority();
+      alert("註冊成功");
+      hideAllPage();
+      setIsShowLoginPage(true);
     });
   }
 

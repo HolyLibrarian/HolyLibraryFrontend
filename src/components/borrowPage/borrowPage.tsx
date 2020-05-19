@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, TextField, Button, Grid, Typography, CssBaseline } from '@material-ui/core';
 import BorrowRecord, { BorrowRecordDefaultValue } from '../../interface/BorrowRecord'
+import $ from 'jquery';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -19,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 interface BorrowPageProps {
     isDisplay?: boolean;
     borrowRecord?: BorrowRecord;
+    returnCollectionId?: number;
     onBorrowSubmit: (borrowRecord: BorrowRecord) => void;
     onReturnSubmit: (collecctionId: string) => void;
 }
@@ -27,6 +29,11 @@ const BorrowPage: React.FC<BorrowPageProps> = (props) => {
     const classes = useStyles();
     const [borrowRecord, setBorrowRecord] = useState(BorrowRecordDefaultValue);
     const [collectionId, setCollectionId] = useState("")
+    const clearForm = () => {
+        $('#userId').val("");
+        $('#collectionId').val("");
+        $('#returnCollectionId').val("");
+    }
 
     return (
         <Container component="main" maxWidth="sm" style={props.isDisplay ? {} : { display: 'none' }}>
@@ -71,7 +78,16 @@ const BorrowPage: React.FC<BorrowPageProps> = (props) => {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={6}></Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                onClick={clearForm}
+                            >
+                                重設
+                            </Button>
+                        </Grid>
                         <Grid item xs={12} sm={6} alignContent="space-around">
                             <Button
                                 type="submit"
@@ -103,13 +119,22 @@ const BorrowPage: React.FC<BorrowPageProps> = (props) => {
                                 name="collectionId"
                                 label="館藏條碼號"
                                 type="collectionId"
-                                id="collectionId"
+                                id="returnCollectionId"
                                 onChange={(event) => {
                                     setCollectionId(event.target.value);
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={6}></Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                onClick={clearForm}
+                            >
+                                重設
+                            </Button>
+                        </Grid>
                         <Grid item xs={12} sm={6}>
                             <Button
                                 type="submit"
