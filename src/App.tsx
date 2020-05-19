@@ -7,7 +7,9 @@ import BorrowPage from './components/borrowPage/borrowPage'
 import PersonalPage from './components/personalPage/personalPage'
 import Navbar from './components/Navbar/navbar'
 import { login, checkAuthorizition, register } from './apis/login'
-import { borrowCollection, returnCollection, getBorrowRecordsByToken } from './apis/borrow'
+import { borrowCollection, returnCollection, searchBorrowRecords, getBorrowRecordsByToken } from './apis/borrow'
+import BorrowRecord, { BorrowRecordDefaultValue } from './interface/BorrowRecord';
+import { borrowCollection, returnCollection,  } from './apis/borrow'
 import BorrowRecord from './interface/BorrowRecord';
 import RegisterForm from './interface/RegisterForm';
 import $ from 'jquery';
@@ -54,37 +56,37 @@ function App() {
 
   const logout = () => {
     localStorage.clear();
+    hideAllPage();
     setIsShowLoginPage(true);
     setAuthority();
   }
 
   const registerRequest = (registerForm: RegisterForm) => {
     register(registerForm, (response) => {
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('authority', response.authority);
-      setIsShowRegisterPage(false);
-      setAuthority();
+      alert("註冊成功");
+      hideAllPage();
+      setIsShowLoginPage(true);
     });
   }
 
   const borrowCollectionRequest = (borrowRecord: BorrowRecord) => {
     borrowCollection(borrowRecord, (response) => {
-      if (response.success) {
-        alert("借閱館藏成功");
-      } else {
-        alert("借閱館藏失敗");
-      }
+      alert("借閱館藏成功");
     })
   }
 
   const returnCollectionRequest = (collectionId: string) => {
-    returnCollection(collectionId, (response) => {
-      if (response.success) {
-        alert("館藏歸還成功");
-      } else {
-        alert("館藏歸還失敗");
-      }
-    })
+    let borrowRecordId = 0;
+    searchBorrowRecords(collectionId, (response) => {
+      response.forEach((element: { isReturned: boolean; id: number; }) => {
+        if (!element.isReturned) {
+          borrowRecordId = element.id;
+          returnCollection(borrowRecordId, (response) => {
+            alert("館藏歸還成功");
+          })
+        }
+      });
+    });
   }
 
   const getBorrowRecords = async () => {

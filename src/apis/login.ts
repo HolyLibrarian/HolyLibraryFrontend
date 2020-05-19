@@ -33,11 +33,11 @@ export const checkAuthorizition = (Jwt: string, success: (respone: any) => void)
         type: "Get",
         dataType: 'json',
         contentType: 'application/json',
-        data: {
+        data: JSON.stringify({
             hearder: {
                 Authorizition: 'bearer ' + Jwt,
             }
-        },
+        }),
         success: function (respone) {
             success(respone);
         },
