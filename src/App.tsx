@@ -4,6 +4,7 @@ import './App.css';
 import LoginPage from './components/loginPage/loginPage'
 import RegisterPage from './components/registerPage/registerPage'
 import BorrowPage from './components/borrowPage/borrowPage'
+import PersonalPage from './components/personalPage/personalPage'
 import Navbar from './components/Navbar/navbar'
 import { login, checkAuthorizition, register } from './apis/login'
 import { borrowCollection, returnCollection } from './apis/borrow'
@@ -15,14 +16,15 @@ function App() {
   const [isShowLoginPage, setIsShowLoginPage] = useState(true);
   const [isShowRegisterPage, setIsShowRegisterPage] = useState(false);
   const [isShowBorrowPage, setIsShowBorrowPage] = useState(false);
+  const [isShowPersonalPage, setIsShowPersonalPage] = useState(false);
   const [isShowManageReaderPage, setIsShowManageReaderPage] = useState(false);
   const [isManager, setIsManager] = useState(false);
   const [isReader, setIsReader] = useState(false);
 
   $(function () {
     checkLoginStatue();
-    localStorage.setItem('authority', 'manager');
-    setAuthority();
+    //localStorage.setItem('authority', 'reader');
+    //setAuthority();
   });
 
   function hideAllPage() {
@@ -47,6 +49,7 @@ function App() {
 
   const loginRequest = (account: string, password: string) => {
     login(account, password, function (response) {
+      console.log(response);
       if (response.success) {
         localStorage.setItem('jwt', response.data.token);
         localStorage.setItem('authority', response.data.iden);
@@ -99,6 +102,8 @@ function App() {
       setIsShowRegisterPage(true);
     } else if (page === "LoginPage") {
       setIsShowLoginPage(true);
+    } else if(page === "PersonalPage"){
+      setIsShowPersonalPage(true);
     }
   }
 
@@ -135,6 +140,10 @@ function App() {
           onBorrowSubmit={borrowCollectionRequest}
           onReturnSubmit={returnCollectionRequest}
           isDisplay={isShowBorrowPage}
+        />
+
+        <PersonalPage
+          isDisplay={isShowPersonalPage}
         />
       </Container>
     </div>

@@ -2,24 +2,25 @@ import $ from 'jquery';
 import BorrowRecord from '../interface/BorrowRecord';
 import RegisterForm from '../interface/RegisterForm';
 
-const host = 'http://localhost:55047';
+const host = 'http://localhost:5000';
 
-export const login = (account: string, password: string, success: (respone: any) => void) => {
+export const login = (account: string, password: string, successPost: (respone: any) => void) => {
     $.ajax({
         url: host + "/session",
         type: "POST",
         dataType: 'json',
-        data: {
-            account: account,
-            password: password
-        },
+        contentType: 'application/json',
+        data: JSON.stringify({
+            Account: account,
+            Password: password
+        }),
         success: function (respone) {
-            success(respone);
+            successPost(respone);
         },
-        error: function () {
+        error: function (errormessage) {
             alert("系統發生錯誤");
         }
-    })
+    });
 }
 
 export const checkAuthorizition = (Jwt: string, success: (respone: any) => void) => {

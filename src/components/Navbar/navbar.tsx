@@ -30,7 +30,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                 <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
                 </IconButton>
                 <Typography variant="h6" className={classes.title}>
-                    神聖圖書館
+                    HolyLibrary
                 </Typography>
                 {(props.isManager ?? false) && 
                  <Button onClick={(event) =>{ props.changePage("ManageCollectionPage") }} color="inherit">館藏管理</Button>}
@@ -40,6 +40,8 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                  <Button onClick={(event) =>{ props.changePage("BorrowCollectionPage") }} color="inherit">借閱管理</Button>}
                 {(props.isReader ?? false) && 
                  <Button onClick={(event) =>{ props.changePage("ReserveCollectionPage") }} color="inherit">預訂書籍</Button>}
+                {(props.isReader ?? false) && 
+                 <Button onClick={(event) =>{ props.changePage("PersonalPage") }} color="inherit">個人頁面</Button>}
             </Toolbar>
         </AppBar>
     );
