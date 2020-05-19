@@ -7,7 +7,7 @@ import BorrowPage from './components/borrowPage/borrowPage'
 import PersonalPage from './components/personalPage/personalPage'
 import Navbar from './components/Navbar/navbar'
 import { login, checkAuthorizition, register } from './apis/login'
-import { borrowCollection, returnCollection } from './apis/borrow'
+import { borrowCollection, returnCollection, getBorrowRecordsByToken } from './apis/borrow'
 import BorrowRecord from './interface/BorrowRecord';
 import RegisterForm from './interface/RegisterForm';
 import $ from 'jquery';
@@ -20,6 +20,7 @@ function App() {
   const [isShowManageReaderPage, setIsShowManageReaderPage] = useState(false);
   const [isManager, setIsManager] = useState(false);
   const [isReader, setIsReader] = useState(false);
+  const [rows, setRows] = useState([] as any);
 
   $(function () {
     //checkLoginStatue();
@@ -86,6 +87,23 @@ function App() {
     })
   }
 
+  const getBorrowRecords = async () => {
+    var token = localStorage.getItem('token');
+    if (token == null) {
+      return [];
+    }
+    const borrowRecords = await getBorrowRecordsByToken(token) as any;
+
+    return borrowRecords.map((borrowRecord: any) => ({
+      name: borrowRecord.collection.name,
+      author: borrowRecord.collection.author,
+      publisher: borrowRecord.collection.publisher,
+      createTime: borrowRecord.createTime,
+      expireTime: borrowRecord.expireTime,
+      isReturned: borrowRecord.isReturned,
+    }));
+  };
+
   const changePage = (page: string) => {
     hideAllPage();
     if (page === "BorrowCollectionPage") {
@@ -96,6 +114,9 @@ function App() {
       setIsShowLoginPage(true);
     } else if (page === "PersonalPage") {
       setIsShowPersonalPage(true);
+      (async function () {
+        setRows(await getBorrowRecords());
+      })();
     }
   }
 
@@ -140,6 +161,7 @@ function App() {
 
         <PersonalPage
           isDisplay={isShowPersonalPage}
+          rows={rows}
         />
       </Container>
     </div>

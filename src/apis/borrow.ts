@@ -37,3 +37,22 @@ export const returnCollection = (collectionId: string, success: (respone: any) =
         }
     })
 }
+
+export const getBorrowRecordsByToken = (token: string) => {
+    return $.ajax({
+        url: host + "/session",
+        type: "GET",
+        headers: {
+            Authorization: 'bearer ' + token,
+        }
+    }).then((res) => {
+        return $.ajax({
+            url: `${host}/borrowRecords?userId=${res.id}`,
+            type: "GET",
+            dataType: 'json',
+        })
+    }).catch((err) => {
+        console.log(err);
+        alert("系統發生錯誤");
+    });
+};
