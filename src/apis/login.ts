@@ -18,7 +18,11 @@ export const login = (account: string, password: string, successPost: (respone: 
             successPost(respone);
         },
         error: function (errormessage) {
-            alert("系統發生錯誤");
+            if (errormessage.status === 401) {
+                alert("帳號或密碼輸入錯誤！登入失敗")
+            } else {
+                alert("系統發生錯誤");
+            }
         }
     });
 }
@@ -28,6 +32,7 @@ export const checkAuthorizition = (Jwt: string, success: (respone: any) => void)
         url: host + "/session",
         type: "Get",
         dataType: 'json',
+        contentType: 'application/json',
         data: {
             hearder: {
                 Authorizition: 'bearer ' + Jwt,
@@ -44,22 +49,27 @@ export const checkAuthorizition = (Jwt: string, success: (respone: any) => void)
 
 export const register = (registerForm: RegisterForm, success: (respone: any) => void) => {
     $.ajax({
-        url: host + "/users",
+        url: host + "/readers",
         type: "Post",
         dataType: 'json',
-        data: {
+        contentType: 'application/json',
+        data: JSON.stringify({
             Account: registerForm.account,
             Password: registerForm.password,
             Email: registerForm.email,
             Name: registerForm.name,
             PhoneNumber: registerForm.phone,
-            MaxBorrowNumber: 5
-        },
+            MaxBorrowNumber: 2
+        }),
         success: function (respone) {
             success(respone);
         },
-        error: function () {
-            alert("系統發生錯誤");
+        error: function (respone) {
+            if (respone.status === 401) {
+                alert("註冊失敗！")
+            } else {
+                alert("系統發生錯誤");
+            }
         }
     })
 }

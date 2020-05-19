@@ -22,55 +22,47 @@ function App() {
   const [isReader, setIsReader] = useState(false);
 
   $(function () {
-    checkLoginStatue();
-    //localStorage.setItem('authority', 'reader');
-    //setAuthority();
+    //checkLoginStatue();
   });
 
   function hideAllPage() {
     setIsShowLoginPage(false);
     setIsShowRegisterPage(false);
     setIsShowBorrowPage(false);
+    setIsShowPersonalPage(false);
   }
 
   const checkLoginStatue = () => {
-    var jwt = localStorage.getItem('jwt');
-    if (jwt != null) {
-      checkAuthorizition(jwt, (response) => {
-        if (response.success) {
-          setIsShowLoginPage(false);
-          setAuthority();
-        } else {
-          setIsShowLoginPage(true);
-        }
+    var token = localStorage.getItem('token');
+    if (token != null) {
+      checkAuthorizition(token, (response) => {
+        setIsShowLoginPage(false);
+        setAuthority();
       });
     }
   }
 
   const loginRequest = (account: string, password: string) => {
     login(account, password, function (response) {
-      console.log(response);
-      if (response.success) {
-        localStorage.setItem('jwt', response.data.token);
-        localStorage.setItem('authority', response.data.iden);
-        setIsShowLoginPage(false);
-        setAuthority();
-      } else {
-        alert("帳號或密碼輸入錯誤！登入失敗")
-      }
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('authority', response.indentification);
+      setIsShowLoginPage(false);
+      setAuthority();
     });
+  }
+
+  const logout = () => {
+    localStorage.clear();
+    setIsShowLoginPage(true);
+    setAuthority();
   }
 
   const registerRequest = (registerForm: RegisterForm) => {
     register(registerForm, (response) => {
-      if (response.success) {
-        localStorage.setItem('jwt', response.data.jwt);
-        localStorage.setItem('authority', response.data.authority);
-        setIsShowRegisterPage(false);
-        setAuthority();
-      } else {
-        alert("註冊失敗");
-      }
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('authority', response.authority);
+      setIsShowRegisterPage(false);
+      setAuthority();
     });
   }
 
@@ -78,17 +70,17 @@ function App() {
     borrowCollection(borrowRecord, (response) => {
       if (response.success) {
         alert("借閱館藏成功");
-      }else{
+      } else {
         alert("借閱館藏失敗");
       }
     })
   }
 
   const returnCollectionRequest = (collectionId: string) => {
-    returnCollection(collectionId, (response)=>{
+    returnCollection(collectionId, (response) => {
       if (response.success) {
         alert("館藏歸還成功");
-      }else{
+      } else {
         alert("館藏歸還失敗");
       }
     })
@@ -102,17 +94,20 @@ function App() {
       setIsShowRegisterPage(true);
     } else if (page === "LoginPage") {
       setIsShowLoginPage(true);
-    } else if(page === "PersonalPage"){
+    } else if (page === "PersonalPage") {
       setIsShowPersonalPage(true);
     }
   }
 
   const setAuthority = () => {
     var authority = localStorage.getItem('authority');
-    if (authority === "reader") {
+    if (authority === "Reader") {
       setIsReader(true);
-    } else if (authority === "manager") {
+    } else if (authority === "Manager") {
       setIsManager(true);
+    } else {
+      setIsReader(false);
+      setIsManager(false);
     }
   }
 
@@ -122,6 +117,7 @@ function App() {
         isManager={isManager}
         isReader={isReader}
         changePage={changePage}
+        logout={logout}
       />
       <Container>
         <LoginPage
