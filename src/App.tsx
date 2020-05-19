@@ -7,7 +7,7 @@ import BorrowPage from './components/borrowPage/borrowPage'
 import PersonalPage from './components/personalPage/personalPage'
 import Navbar from './components/Navbar/navbar'
 import { login, checkAuthorizition, register } from './apis/login'
-import { borrowCollection, returnCollection } from './apis/borrow'
+import { borrowCollection, returnCollection, searchBorrowRecords } from './apis/borrow'
 import BorrowRecord from './interface/BorrowRecord';
 import RegisterForm from './interface/RegisterForm';
 import $ from 'jquery';
@@ -68,22 +68,22 @@ function App() {
 
   const borrowCollectionRequest = (borrowRecord: BorrowRecord) => {
     borrowCollection(borrowRecord, (response) => {
-      if (response.success) {
-        alert("借閱館藏成功");
-      } else {
-        alert("借閱館藏失敗");
-      }
+      alert("借閱館藏成功");
     })
   }
 
   const returnCollectionRequest = (collectionId: string) => {
-    returnCollection(collectionId, (response) => {
-      if (response.success) {
-        alert("館藏歸還成功");
-      } else {
-        alert("館藏歸還失敗");
-      }
-    })
+    let borrowRecordId = 0;
+    searchBorrowRecords(collectionId, (response) => {
+      response.forEach((element: { isReturned: boolean; id: number; }) => {
+        if (!element.isReturned) {
+          borrowRecordId = element.id;
+          returnCollection(borrowRecordId, (response) => {
+            alert("館藏歸還成功");
+          })
+        }
+      });
+    });
   }
 
   const changePage = (page: string) => {
