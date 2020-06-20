@@ -9,8 +9,6 @@ import Navbar from './components/Navbar/navbar'
 import { login, checkAuthorizition, register } from './apis/login'
 import { borrowCollection, returnCollection, searchBorrowRecords, getBorrowRecordsByToken } from './apis/borrow'
 import BorrowRecord, { BorrowRecordDefaultValue } from './interface/BorrowRecord';
-import { borrowCollection, returnCollection,  } from './apis/borrow'
-import BorrowRecord from './interface/BorrowRecord';
 import RegisterForm from './interface/RegisterForm';
 import $ from 'jquery';
 
