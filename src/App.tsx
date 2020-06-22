@@ -13,31 +13,19 @@ import RegisterForm from './interface/RegisterForm';
 import $ from 'jquery';
 
 function App() {
-  const [isShowLoginPage, setIsShowLoginPage] = useState(true);
-  const [isShowRegisterPage, setIsShowRegisterPage] = useState(false);
-  const [isShowBorrowPage, setIsShowBorrowPage] = useState(false);
-  const [isShowPersonalPage, setIsShowPersonalPage] = useState(false);
-  const [isShowManageReaderPage, setIsShowManageReaderPage] = useState(false);
   const [isManager, setIsManager] = useState(false);
   const [isReader, setIsReader] = useState(false);
+  const [currentPage, setCurrentPage] = useState('Login');
   const [rows, setRows] = useState([] as any);
 
   $(function () {
     //checkLoginStatue();
   });
 
-  function hideAllPage() {
-    setIsShowLoginPage(false);
-    setIsShowRegisterPage(false);
-    setIsShowBorrowPage(false);
-    setIsShowPersonalPage(false);
-  }
-
   const checkLoginStatue = () => {
     var token = localStorage.getItem('token');
     if (token != null) {
       checkAuthorizition(token, (response) => {
-        setIsShowLoginPage(false);
         setAuthority();
       });
     }
@@ -47,23 +35,19 @@ function App() {
     login(account, password, function (response) {
       localStorage.setItem('token', response.token);
       localStorage.setItem('authority', response.indentification);
-      setIsShowLoginPage(false);
+      setCurrentPage("");
       setAuthority();
     });
   }
 
   const logout = () => {
     localStorage.clear();
-    hideAllPage();
-    setIsShowLoginPage(true);
     setAuthority();
   }
 
   const registerRequest = (registerForm: RegisterForm) => {
     register(registerForm, (response) => {
       alert("註冊成功");
-      hideAllPage();
-      setIsShowLoginPage(true);
     });
   }
 
@@ -105,15 +89,14 @@ function App() {
   };
 
   const changePage = (page: string) => {
-    hideAllPage();
     if (page === "BorrowCollectionPage") {
-      setIsShowBorrowPage(true);
+      setCurrentPage("Borrow");
     } else if (page === "RegisterPage") {
-      setIsShowRegisterPage(true);
+      setCurrentPage("Register");
     } else if (page === "LoginPage") {
-      setIsShowLoginPage(true);
+      setCurrentPage("Login");
     } else if (page === "PersonalPage") {
-      setIsShowPersonalPage(true);
+      setCurrentPage("Personal");
       (async function () {
         setRows(await getBorrowRecords());
       })();
@@ -141,28 +124,28 @@ function App() {
         logout={logout}
       />
       <Container>
-        <LoginPage
+        {(currentPage === "Login" ?? false) && <LoginPage
           onSubmit={loginRequest}
-          isDisplay={isShowLoginPage}
+          isDisplay={true}
           changePage={changePage}
-        />
+        />}
 
-        <RegisterPage
+        {(currentPage === "Register" ?? false) && <RegisterPage
           onSubmit={registerRequest}
-          isDisplay={isShowRegisterPage}
+          isDisplay={true}
           changePage={changePage}
-        />
+        />}
 
-        <BorrowPage
+        {(currentPage === "Borrow" ?? false) && <BorrowPage
           onBorrowSubmit={borrowCollectionRequest}
           onReturnSubmit={returnCollectionRequest}
-          isDisplay={isShowBorrowPage}
-        />
+          isDisplay={true}
+        />}
 
-        <PersonalPage
-          isDisplay={isShowPersonalPage}
+        {(currentPage === "Personal" ?? false) && <PersonalPage
+          isDisplay={true}
           rows={rows}
-        />
+        />}
       </Container>
     </div>
   );
