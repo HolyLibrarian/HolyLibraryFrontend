@@ -42,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                 {(props.isReader ?? false) && 
                  <Button onClick={(event) =>{ props.changePage("ReserveCollectionPage") }} color="inherit">預訂書籍</Button>}
                 {(props.isReader ?? false) && 
-                 <Button onClick={(event) =>{ props.changePage("PersonalPage") }} color="inherit">個人頁面</Button>}
+                 <Button onClick={(event) =>{ props.changePage("PersonalPage") }} color="inherit">借閱紀錄</Button>}
                 {((props.isReader ?? false) || (props.isManager ?? false)) && 
                  <Button onClick={(event) =>{ props.logout() }} color="inherit">登出</Button>}
             </Toolbar>

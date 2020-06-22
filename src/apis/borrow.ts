@@ -32,7 +32,7 @@ export const searchBorrowRecords = (collectionId: string, success: (respone: any
         success: function (respone) {
             success(respone);
         },
-        error: function () {
+        error: function () {    
             alert("系統發生錯誤");
         }
     })
