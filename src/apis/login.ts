@@ -1,8 +1,6 @@
 import $ from 'jquery';
-import BorrowRecord from '../interface/BorrowRecord';
 import RegisterForm from '../interface/RegisterForm';
-
-const host = 'http://localhost:5000';
+import {host} from './apiConfig'
 
 export const login = (account: string, password: string, successPost: (respone: any) => void) => {
     $.ajax({

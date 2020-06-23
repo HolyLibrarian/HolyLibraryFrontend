@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import BorrowRecord from '../interface/BorrowRecord';
-
-const host = 'http://localhost:5000';
+import {host} from './apiConfig'
 
 export const borrowCollection = (borrowRecord: BorrowRecord, success: (respone: any) => void) => {
     $.ajax({

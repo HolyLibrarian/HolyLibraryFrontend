@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { AppBar, Container, Toolbar, IconButton, Typography, Button } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Container } from '@material-ui/core';
 import './App.css';
 import LoginPage from './components/loginPage/loginPage'
 import RegisterPage from './components/registerPage/registerPage'
 import BorrowPage from './components/borrowPage/borrowPage'
 import PersonalPage from './components/personalPage/personalPage'
 import Navbar from './components/Navbar/navbar'
+import ManageReaderPage from './components/manageReaderPage/manageReaderPage'
 import { login, checkAuthorizition, register } from './apis/login'
 import { borrowCollection, returnCollection, searchBorrowRecords, getBorrowRecordsByToken } from './apis/borrow'
-import BorrowRecord, { BorrowRecordDefaultValue } from './interface/BorrowRecord';
+import { getReadersByToken } from './apis/reader'
+import BorrowRecord from './interface/BorrowRecord';
 import RegisterForm from './interface/RegisterForm';
 import $ from 'jquery';
 
@@ -42,6 +44,7 @@ function App() {
 
   const logout = () => {
     localStorage.clear();
+    setCurrentPage("Login");
     setAuthority();
   }
 
@@ -88,6 +91,16 @@ function App() {
     }));
   };
 
+  const getReaders = async () => {
+    var token = localStorage.getItem('token');
+    if(token == null){
+      return [];
+    }
+    const readers = await getReadersByToken(token) as any;
+
+    return readers
+  }
+
   const changePage = (page: string) => {
     if (page === "BorrowCollectionPage") {
       setCurrentPage("Borrow");
@@ -99,6 +112,11 @@ function App() {
       setCurrentPage("Personal");
       (async function () {
         setRows(await getBorrowRecords());
+      })();
+    } else if(page === "ManageReaderPage") {
+      setCurrentPage("ManageReader");
+      (async function () {
+        setRows(await getReaders());
       })();
     }
   }
@@ -145,6 +163,12 @@ function App() {
         {(currentPage === "Personal" ?? false) && <PersonalPage
           isDisplay={true}
           rows={rows}
+        />}
+
+        {(currentPage === "ManageReader" ?? false) && <ManageReaderPage
+          rows={rows}
+          isDisplay={true}
+          changePage={changePage}
         />}
       </Container>
     </div>
