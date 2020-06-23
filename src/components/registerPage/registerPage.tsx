@@ -147,7 +147,7 @@ const RegisterPage: React.FC<RegisterPageProps> = (props) => {
             color="primary"
             className={classes.submit}
           >
-            登入
+            註冊
           </Button>
           <Grid container>
             <Grid item>

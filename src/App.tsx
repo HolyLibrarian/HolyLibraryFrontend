@@ -7,9 +7,11 @@ import BorrowPage from './components/borrowPage/borrowPage'
 import PersonalPage from './components/personalPage/personalPage'
 import Navbar from './components/Navbar/navbar'
 import ManageReaderPage from './components/manageReaderPage/manageReaderPage'
+import ManageCollectionPage from './components/manageCollectionPage/manageCollectionPage'
 import { login, checkAuthorizition, register } from './apis/login'
 import { borrowCollection, returnCollection, searchBorrowRecords, getBorrowRecordsByToken } from './apis/borrow'
 import { getReadersByToken } from './apis/reader'
+import { getCollectionsByToken } from './apis/collection'
 import BorrowRecord from './interface/BorrowRecord';
 import RegisterForm from './interface/RegisterForm';
 import $ from 'jquery';
@@ -93,12 +95,22 @@ function App() {
 
   const getReaders = async () => {
     var token = localStorage.getItem('token');
-    if(token == null){
+    if (token == null) {
       return [];
     }
     const readers = await getReadersByToken(token) as any;
 
     return readers
+  }
+
+  const getCollections = async () => {
+    var token = localStorage.getItem('token');
+    if (token == null) {
+      return [];
+    }
+    const collections = await getCollectionsByToken(token) as any;
+
+    return collections
   }
 
   const changePage = (page: string) => {
@@ -113,10 +125,15 @@ function App() {
       (async function () {
         setRows(await getBorrowRecords());
       })();
-    } else if(page === "ManageReaderPage") {
+    } else if (page === "ManageReaderPage") {
       setCurrentPage("ManageReader");
       (async function () {
         setRows(await getReaders());
+      })();
+    } else if (page === "ManageCollectionPage") {
+      setCurrentPage("ManageCollection");
+      (async function () {
+        setRows(await getCollections());
       })();
     }
   }
@@ -166,6 +183,12 @@ function App() {
         />}
 
         {(currentPage === "ManageReader" ?? false) && <ManageReaderPage
+          rows={rows}
+          isDisplay={true}
+          changePage={changePage}
+        />}
+
+        {(currentPage === "ManageCollection" ?? false) && <ManageCollectionPage
           rows={rows}
           isDisplay={true}
           changePage={changePage}
