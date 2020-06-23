@@ -5,6 +5,7 @@ import {
     TableContainer, Table, TableHead, TableCell, TableRow, TableBody,
     Paper
 } from '@material-ui/core';
+import { cancelReserve } from '../../apis/collection'
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -19,16 +20,20 @@ const useStyles = makeStyles((theme) => ({
     },
     table: {
         minWidth: 450,
-    }
+    },
+    button: {
+        margin: theme.spacing(1),
+    },
 }));
 
-interface PesonalPageProps {
+interface ReserveRecordPageProps {
     rows: any;
     isDisplay?: boolean;
     isBorrowRecordDisplay?: boolean;
+    goBack():void;
 }
 
-const PersonalPage: React.FC<PesonalPageProps> = (props) => {
+const ReserveRecordPage: React.FC<ReserveRecordPageProps> = (props) => {
     const classes = useStyles();
 
     return (
@@ -36,14 +41,19 @@ const PersonalPage: React.FC<PesonalPageProps> = (props) => {
             <div className={classes.paper}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6} alignContent="space-around">
-                        {/* <Button
+                        {<Button
                             type="submit"
-                            fullWidth
                             variant="contained"
                             color="primary"
+                            className={classes.button}
+                            onClick = {
+                                (event) =>{
+                                    props.goBack();
+                                }
+                            }
                         >
-                            查詢借閱紀錄
-                        </Button> */}
+                            回上一頁
+                        </Button>}
                     </Grid>
                 </Grid>
                 <TableContainer component={Paper}>
@@ -53,8 +63,9 @@ const PersonalPage: React.FC<PesonalPageProps> = (props) => {
                                 <TableCell>書名</TableCell>
                                 <TableCell align="right">作者</TableCell>
                                 <TableCell align="right">出版社</TableCell>
-                                <TableCell align="right">到期時間</TableCell>
+                                <TableCell align="right">預約到期時間</TableCell>
                                 <TableCell align="right">借閱狀態</TableCell>
+                                <TableCell align="right"></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -66,7 +77,22 @@ const PersonalPage: React.FC<PesonalPageProps> = (props) => {
                                     <TableCell align="right">{row.author}</TableCell>
                                     <TableCell align="right">{row.publisher}</TableCell>
                                     <TableCell align="right">{row.expireTime}</TableCell>
-                                    <TableCell align="right">{row.isReturned ? "已還" : "未還"}</TableCell>
+                                    <TableCell align="right">{row.isborrowed ? "可借閱" : "未規還"}</TableCell>
+                                    <TableCell align="right">
+                                        <Button 
+                                         variant="contained"
+                                         color="primary"
+                                         className={classes.button}
+                                         onClick={(event) => {
+                                            cancelReserve(row.id, (response) =>{
+                                                alert("成功取消預訂！");
+                                                props.goBack();
+                                            })
+                                         }}
+                                        >
+                                            取消
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -77,4 +103,4 @@ const PersonalPage: React.FC<PesonalPageProps> = (props) => {
     );
 }
 
-export default PersonalPage;
+export default ReserveRecordPage;

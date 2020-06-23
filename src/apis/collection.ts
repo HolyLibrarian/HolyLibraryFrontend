@@ -90,7 +90,7 @@ export const getCollectionsByToken = (token: string) => {
         type: "GET",
         headers: {
             Authorization: 'bearer ' + token,
-        }
+        },
     }).then((res) => {
         return $.ajax({
             url: `${host}/collections`,
@@ -102,3 +102,82 @@ export const getCollectionsByToken = (token: string) => {
         alert("系統發生錯誤");
     });
 };
+
+export const getCollectionsByName = (token: string, name: string) => {
+    return $.ajax({
+        url: host + "/session",
+        type: "GET",
+        headers: {
+            Authorization: 'bearer ' + token,
+        }
+    }).then((res) => {
+        return $.ajax({
+            url: `${host}/collections?name=${name}`,
+            type: "GET",
+            dataType: 'json',
+        })
+    }).catch((err) => {
+        console.log(err);
+        alert("系統發生錯誤");
+    });
+};
+
+export const reserveCollection = (collectionId: number, success: (respone: any) => void) => {
+    $.ajax({
+        url: host + "/reservations",
+        type: "POST",
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            UserId: Number(localStorage.getItem('loginUserId')),
+            CollectionId: collectionId,
+            ExpireDays: 7
+        }),
+        success: function (respone) {
+            success(respone);
+        },
+        error: function (respone) {
+            if (respone.status === 403) {
+                alert("此書籍尚未有人借閱，可直接借閱");
+            } else if (respone.status === 404){
+                alert("已預訂！");
+            } else {
+                alert("系統發生錯誤");
+            }
+        }
+    })
+}
+
+export const getReserveRecordsByToken = (token: string) => {
+    return $.ajax({
+        url: host + "/session",
+        type: "GET",
+        headers: {
+            Authorization: 'bearer ' + token,
+        }
+    }).then((res) => {
+        return $.ajax({
+            url: `${host}/reservations?userId=${localStorage.getItem('loginUserId')}`,
+            type: "GET",
+            dataType: 'json'
+        })
+    }).catch((err) => {
+        console.log(err);
+        alert("系統發生錯誤");
+    });
+}
+
+export const cancelReserve = (reserveId: number, success: (respone: any) => void) => {
+    $.ajax({
+        url: host + `/reservations/${reserveId}/isCanceled`,
+        type: "POST",
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function (respone) {
+            success(respone);
+        },
+        error: function (respone) {
+            alert("系統發生錯誤");
+        }
+    })
+}

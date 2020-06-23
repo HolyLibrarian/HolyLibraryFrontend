@@ -8,10 +8,11 @@ import PersonalPage from './components/personalPage/personalPage'
 import Navbar from './components/Navbar/navbar'
 import ManageReaderPage from './components/manageReaderPage/manageReaderPage'
 import ManageCollectionPage from './components/manageCollectionPage/manageCollectionPage'
+import ReservePage from './components/reservePage/reservePage'
 import { login, checkAuthorizition, register } from './apis/login'
 import { borrowCollection, returnCollection, searchBorrowRecords, getBorrowRecordsByToken } from './apis/borrow'
 import { getReadersByToken } from './apis/reader'
-import { getCollectionsByToken } from './apis/collection'
+import { getCollectionsByToken, getCollectionsByName } from './apis/collection'
 import BorrowRecord from './interface/BorrowRecord';
 import RegisterForm from './interface/RegisterForm';
 import $ from 'jquery';
@@ -39,6 +40,7 @@ function App() {
     login(account, password, function (response) {
       localStorage.setItem('token', response.token);
       localStorage.setItem('authority', response.indentification);
+      localStorage.setItem('loginUserId', response.id);
       setCurrentPage("");
       setAuthority();
     });
@@ -113,6 +115,16 @@ function App() {
     return collections
   }
 
+  const getCollectionsByname = async (name: string) => {
+    var token = localStorage.getItem('token');
+    if (token == null) {
+      return [];
+    }
+    const collections = await getCollectionsByName(token, name) as any;
+
+    setRows(collections);
+  }
+
   const changePage = (page: string) => {
     if (page === "BorrowCollectionPage") {
       setCurrentPage("Borrow");
@@ -132,6 +144,11 @@ function App() {
       })();
     } else if (page === "ManageCollectionPage") {
       setCurrentPage("ManageCollection");
+      (async function () {
+        setRows(await getCollections());
+      })();
+    } else if (page === "ReservePage") {
+      setCurrentPage("Reserve");
       (async function () {
         setRows(await getCollections());
       })();
@@ -192,6 +209,13 @@ function App() {
           rows={rows}
           isDisplay={true}
           changePage={changePage}
+        />}
+
+        {(currentPage === "Reserve" ?? false) && <ReservePage
+          rows={rows}
+          isDisplay={true}
+          changePage={changePage}
+          getCollectionsByName={getCollectionsByname}
         />}
       </Container>
     </div>

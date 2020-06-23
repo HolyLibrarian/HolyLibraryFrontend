@@ -40,7 +40,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                 {(props.isManager ?? false) && 
                  <Button onClick={(event) =>{ props.changePage("BorrowCollectionPage") }} color="inherit">借閱管理</Button>}
                 {(props.isReader ?? false) && 
-                 <Button onClick={(event) =>{ props.changePage("ReserveCollectionPage") }} color="inherit">預訂書籍</Button>}
+                 <Button onClick={(event) =>{ props.changePage("ReservePage") }} color="inherit">預訂書籍</Button>}
                 {(props.isReader ?? false) && 
                  <Button onClick={(event) =>{ props.changePage("PersonalPage") }} color="inherit">借閱紀錄</Button>}
                 {((props.isReader ?? false) || (props.isManager ?? false)) && 
